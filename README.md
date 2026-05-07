@@ -66,3 +66,60 @@ Top churn indicators:
 - Deploying with Docker
 - Adding a Streamlit UI dashboard
 - Real‑time monitoring
+
+## Architecture / ML Pipeline Diagram
+                        ┌────────────────────────┐
+                        │      Raw Dataset       │
+                        │  (Telco Customer Data) │
+                        └─────────────┬──────────┘
+                                      │
+                                      ▼
+                         ┌────────────────────────┐
+                         │   Data Ingestion       │
+                         │  (load CSV → dataframe)│
+                         └─────────────┬──────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │      Data Cleaning & Preprocessing │
+                    │ - Handle missing values            │
+                    │ - Encode categorical features      │
+                    │ - Scale numerical features         │
+                    └─────────────────────┬─────────────┘
+                                          │
+                                          ▼
+                    ┌───────────────────────────────────┐
+                    │        Feature Engineering         │
+                    │ - Create new variables             │
+                    │ - Remove irrelevant features       │
+                    │ - Train/Test split                 │
+                    └─────────────────────┬─────────────┘
+                                          │
+                                          ▼
+                    ┌───────────────────────────────────┐
+                    │         Model Training             │
+                    │ - Logistic Regression              │
+                    │ - Random Forest                    │
+                    │ - XGBoost                          │
+                    └─────────────────────┬─────────────┘
+                                          │
+                                          ▼
+                    ┌───────────────────────────────────┐
+                    │        Model Evaluation            │
+                    │ - Accuracy / F1 / AUC              │
+                    │ - Confusion Matrix                 │
+                    │ - Select best model                │
+                    └─────────────────────┬─────────────┘
+                                          │
+                                          ▼
+                    ┌───────────────────────────────────┐
+                    │         Model Export               │
+                    │ Save best model → models/*.pkl     │
+                    └─────────────────────┬─────────────┘
+                                          │
+                                          ▼
+                    ┌───────────────────────────────────┐
+                    │      Prediction API (FastAPI)      │
+                    │ - Load model                       │
+                    │ - Predict churn (JSON input)       │
+                    └───────────────────────────────────┘
