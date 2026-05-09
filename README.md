@@ -12,7 +12,7 @@ The project includes the full machine learning pipeline: data exploration, prepr
 
 ## Business Problem
 
-Customer churn is a major challenge for subscription‑based businesses. Acquiring new customers is significantly more expensive than retaining existing ones. This project aims to build a predictive pipeline to identify high‑risk customers so that telecom companies can take proactive retention actions and optimize customer lifetime value.
+These days customer churn is a critical challenge for subscription‑based and service‑driven businesses because losing existing customers directly impacts recurring revenue and long‑term growth. In addition, acquiring new customers is significantly more expensive than retaining current ones, and if high‑value customers leave, the company not only loses immediate revenue but also their future lifetime value. The objective of this project is to develop a predictive model that identifies customers at high risk of churn before they leave. By enabling early intervention through targeted retention strategies, the business can improve customer retention and protect long‑term revenue.
 
 ## Project Architecture
 
