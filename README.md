@@ -1,125 +1,178 @@
-# Telco Customer Churn Prediction Pipeline
-
-End‑to‑end machine learning pipeline for predicting customer churn, including data preprocessing, feature engineering, model development, evaluation, and a lightweight API for real‑time predictions.
-
-This project analyzes telecom customer behavior using the Telco Customer Churn dataset and builds a predictive pipeline to identify subscribers who are at high risk of leaving the service. The goal is to support data‑driven retention strategies and enable proactive business actions.
+# Telco Customer Churn Prediction Kaggel Data Set
 
 ## Project Overview
+The objective of this project is to predict customer churn using the IBM Telco Customer Churn dataset (Kaggle) while demonstrating a rigorous and reproducible machine learning workflow. The focus is not only predictive performance, but correct methodological design.
 
-Customer churn is a critical problem for subscription-based businesses such as telecom companies. In this project, machine learning models are used to analyze customer behavior and predict the probability of churn.
+## Dataset
 
-The project includes the full machine learning pipeline: data exploration, preprocessing, feature engineering, model training, evaluation, and prediction.
+The project uses the **Telco Customer Churn** dataset, which contains **7,043 customer records** and **21 columns**.  
+The target variable is **Churn**.  
+The features include customer profile indicators, subscribed services, contract details, and billing information.  
+This dataset does **not** contain detailed demographic or geographic attributes such as age, income, address, or location.
 
-## Business Problem
+## Workflow
+1. Data cleaning
+   - replaced blank values in `TotalCharges`
+   - converted `TotalCharges` to numeric
+   - removed missing values
+   - dropped `customerID`
+   - encoded `Churn` as binary
 
-These days customer churn is a critical challenge for subscription‑based and service‑driven businesses because losing existing customers directly impacts recurring revenue and long‑term growth. In addition, acquiring new customers is significantly more expensive than retaining current ones, and if high‑value customers leave, the company not only loses immediate revenue but also their future lifetime value. The objective of this project is to develop a predictive model that identifies customers at high risk of churn before they leave. By enabling early intervention through targeted retention strategies, the business can improve customer retention and protect long‑term revenue.
+2. Exploratory Data Analysis
+   - churn distribution
+   - churn by contract type
+   - churn by tech support
+   - monthly charges distribution by churn
 
-## Project Architecture
+3. Feature preparation
+   - split data into features (`X`) and target (`y`)
+   - detected numerical and categorical columns
 
-End‑to‑end ML pipeline:
+4. Train/test split
+   - used stratified split to preserve class proportions
 
-1. Data ingestion
-2. Data cleaning and preprocessing
-3. Feature engineering
-4. Model training and evaluation
-5. Saving the best model
-6. Real‑time prediction API (FastAPI)
+5. Preprocessing and modeling
+   - scaled numerical features with `StandardScaler`
+   - encoded categorical features with `OneHotEncoder`
+   - trained `LogisticRegression` with `class_weight='balanced'`
 
-## How to Run
+6. Evaluation
+   - classification report
+   - confusion matrix
+   - ROC-AUC score
+   - F1 score
+   - recall
+   - precision
 
-Train the model:
-python src/train_model.py
+## Methodology
+1. Data Cleaning
+Converted TotalCharges to numeric
+Removed missing values
+Dropped non-informative identifier (customerID)
+Encoded target variable (Churn → 0/1)
 
-text
+2. Exploratory Analysis
+Identified class imbalance
+Analyzed churn across:
+Contract type
+Tech support
+Monthly charges
+This step guided modeling decisions (e.g., imbalance handling).
 
-Make predictions:
-python src/predict.py --input sample_input.json
+3. Experimental Design
+To ensure methodological correctness:
 
-text
+Stratified Train/Test Split (80/20)
+Clear separation of features (X) and target (y)
+Automatic detection of numerical and categorical variables
 
-Run API:
-uvicorn api.main:app --reload
+4. Reproducible ML Pipeline
+All preprocessing steps are encapsulated inside a Scikit‑Learn Pipeline to prevent data leakage.
 
-text
+Preprocessing (ColumnTransformer):
 
-## Model Performance
+StandardScaler → numerical features
+OneHotEncoder(drop='first', handle_unknown='ignore') → categorical features
+Model:
 
-The best model achieved:
-- Accuracy: XX%
-- F1 Score: XX%
-- ROC‑AUC: XX%
+Logistic Regression
+class_weight='balanced' (handles class imbalance)
+solver='liblinear'
+random_state=42
+This ensures that transformations are learned only from training data.
 
-(Replace with your real results when ready.)
+## Tech Stack
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-Learn
 
-## Key Insights
+## Evaluation Metrics
+Performance is evaluated using:
 
-Top churn indicators:
-- MonthlyCharges
-- Contract type
-- Tenure
-- Internet service type
-
-## Future Improvements
-
-- Hyperparameter tuning with Optuna
-- Experiment tracking using MLflow
-- Deploying with Docker
-- Adding a Streamlit UI dashboard
-- Real‑time monitoring
+Classification Report
+Confusion Matrix
+ROC-AUC
+F1 Score
+Recall
+Precision
+Using multiple metrics ensures robust assessment under class imbalance.
 
 ## Architecture / ML Pipeline Diagram
-                        ┌────────────────────────┐
-                        │      Raw Dataset       │
-                        │  (Telco Customer Data) │
-                        └─────────────┬──────────┘
-                                      │
-                                      ▼
-                         ┌────────────────────────┐
-                         │   Data Ingestion       │
-                         │  (load CSV → dataframe)│
-                         └─────────────┬──────────┘
-                                      │
-                                      ▼
-                    ┌───────────────────────────────────┐
-                    │      Data Cleaning & Preprocessing │
-                    │ - Handle missing values            │
-                    │ - Encode categorical features      │
-                    │ - Scale numerical features         │
-                    └─────────────────────┬─────────────┘
-                                          │
-                                          ▼
-                    ┌───────────────────────────────────┐
-                    │        Feature Engineering         │
-                    │ - Create new variables             │
-                    │ - Remove irrelevant features       │
-                    │ - Train/Test split                 │
-                    └─────────────────────┬─────────────┘
-                                          │
-                                          ▼
-                    ┌───────────────────────────────────┐
-                    │         Model Training             │
-                    │ - Logistic Regression              │
-                    │ - Random Forest                    │
-                    │ - XGBoost                          │
-                    └─────────────────────┬─────────────┘
-                                          │
-                                          ▼
-                    ┌───────────────────────────────────┐
-                    │        Model Evaluation            │
-                    │ - Accuracy / F1 / AUC              │
-                    │ - Confusion Matrix                 │
-                    │ - Select best model                │
-                    └─────────────────────┬─────────────┘
-                                          │
-                                          ▼
-                    ┌───────────────────────────────────┐
-                    │         Model Export               │
-                    │ Save best model → models/*.pkl     │
-                    └─────────────────────┬─────────────┘
-                                          │
-                                          ▼
-                    ┌───────────────────────────────────┐
-                    │      Prediction API (FastAPI)      │
-                    │ - Load model                       │
-                    │ - Predict churn (JSON input)       │
-                    └───────────────────────────────────┘
+┌──────────────────────────────┐
+│         Raw Dataset          │
+│   Telco-Customer-Churn.csv   │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│       Data Cleaning          │
+│ - Replace blank values       │
+│ - Convert TotalCharges       │
+│ - Drop missing rows          │
+│ - Remove customerID          │
+│ - Map target (Churn) to 0/1  │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│     Exploratory Analysis     │
+│ - Churn distribution         │
+│ - Contract vs Churn          │
+│ - TechSupport vs Churn       │
+│ - MonthlyCharges vs Churn    │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│   Feature / Target Split     │
+│ X = all predictors           │
+│ y = Churn                    │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│  Identify Feature Types      │
+│ - Numerical columns          │
+│ - Categorical columns        │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│  Train / Test Split          │
+│ stratify = y                 │
+│ test_size = 0.2              │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌────────────────────────────────────────────────────────┐
+|                                                        |
+│           Preprocessing Pipeline                       |  
+│                                                        |
+│ Numerical Features  ──► StandardScaler                 | 
+│ Categorical Features ─► OneHotEncoder                  |
+│                         (drop='first',                 |
+│                         handle_unknown='ignore')       |
+└───────────────┬────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│     Logistic Regression      │
+│ - solver='liblinear'         │
+│ - class_weight='balanced'    │
+│ - random_state=42            │
+└───────────────┬──────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│       Model Evaluation       │
+│ - Classification Report      │
+│ - Confusion Matrix           │
+│ - ROC-AUC Score              │
+│ - F1 Score                   │
+│ - Recall                     │
+│ - Precision                  │
+└──────────────────────────────┘
+
