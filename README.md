@@ -101,78 +101,32 @@ Precision
 Using multiple metrics ensures robust assessment under class imbalance.
 
 ## Architecture / ML Pipeline Diagram
-┌──────────────────────────────┐
-│         Raw Dataset          │
-│   Telco-Customer-Churn.csv   │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│       Data Cleaning          │
-│ - Replace blank values       │
-│ - Convert TotalCharges       │
-│ - Drop missing rows          │
-│ - Remove customerID          │
-│ - Map target (Churn) to 0/1  │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│     Exploratory Analysis     │
-│ - Churn distribution         │
-│ - Contract vs Churn          │
-│ - TechSupport vs Churn       │
-│ - MonthlyCharges vs Churn    │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│   Feature / Target Split     │
-│ X = all predictors           │
-│ y = Churn                    │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│  Identify Feature Types      │
-│ - Numerical columns          │
-│ - Categorical columns        │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│  Train / Test Split          │
-│ stratify = y                 │
-│ test_size = 0.2              │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌────────────────────────────────────────────────────────┐
-|                                                        |
-│           Preprocessing Pipeline                       |  
-│                                                        |
-│ Numerical Features  ──► StandardScaler                 | 
-│ Categorical Features ─► OneHotEncoder                  |
-│                         (drop='first',                 |
-│                         handle_unknown='ignore')       |
-└───────────────┬────────────────────────────────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│     Logistic Regression      │
-│ - solver='liblinear'         │
-│ - class_weight='balanced'    │
-│ - random_state=42            │
-└───────────────┬──────────────┘
-                │
-                ▼
-┌──────────────────────────────┐
-│       Model Evaluation       │
-│ - Classification Report      │
-│ - Confusion Matrix           │
-│ - ROC-AUC Score              │
-│ - F1 Score                   │
-│ - Recall                     │
-│ - Precision                  │
-└──────────────────────────────┘
+
+Raw Dataset (IBM Telco Data)
+        │
+        ▼
+Data Cleaning
+        │
+        ▼
+Exploratory Data Analysis
+        │
+        ▼
+Feature / Target Split
+        │
+        ▼
+Feature Type Detection
+        │
+        ▼
+Stratified Train/Test Split
+        │
+        ▼
+ColumnTransformer
+   ├── StandardScaler (Numerical)
+   └── OneHotEncoder (Categorical)
+        │
+        ▼
+Logistic Regression (Balanced)
+        │
+        ▼
+Model Evaluation
 
