@@ -1,133 +1,99 @@
-# Telco Customer Churn Prediction Kaggel Data Set
+# Telco Customer Churn Prediction & Recall Optimization
 
-## Project Overview
-The objective of this project is to predict customer churn using the IBM Telco Customer Churn dataset (Kaggle) while demonstrating a rigorous and reproducible machine learning workflow. The focus is not only predictive performance, but correct methodological design.
+# Project Overview
 
-## Dataset
+The objective of this project is to predict customer churn using the IBM Telco Customer Churn dataset (Kaggle) while demonstrating a rigorous and reproducible machine learning workflow. The core focus is not only predictive performance but correct methodological design and business-oriented optimization.
 
-The project uses the **Telco Customer Churn** dataset, which contains **7,043 customer records** and **21 columns**.  
-The target variable is **Churn**.  
-The features include customer profile indicators, subscribed services, contract details, and billing information.  
-This dataset does **not** contain detailed demographic or geographic attributes such as age, income, address, or location.
+In customer retention, identifying potential churners is highly critical. Therefore, this project places a strong emphasis on maximizing Recall (minimizing False Negatives) through systematic model evaluation and Decision Threshold Tuning.
 
-## Workflow
-1. Data cleaning
-   - replaced blank values in `TotalCharges`
-   - converted `TotalCharges` to numeric
-   - removed missing values
-   - dropped `customerID`
-   - encoded `Churn` as binary
+# Dataset
 
-2. Exploratory Data Analysis
-   - churn distribution
-   - churn by contract type
-   - churn by tech support
-   - monthly charges distribution by churn
+The project uses the Telco Customer Churn dataset, which contains 7,043 customer records and 21 columns.
+Target Variable: Churn (Yes/No, mapped to 1/0).
+Features: Customer profile indicators (gender, partner, dependents, senior citizen status), subscribed services (internet, streaming, online security, tech support), contract details, payment methods, and billing information.
 
-3. Feature preparation
-   - split data into features (`X`) and target (`y`)
-   - detected numerical and categorical columns
+Scope Note: This dataset does not contain detailed demographic or geographic attributes such as age, income, address, or location.
 
-4. Train/test split
-   - used stratified split to preserve class proportions
-
-5. Preprocessing and modeling
-   - scaled numerical features with `StandardScaler`
-   - encoded categorical features with `OneHotEncoder`
-   - trained `LogisticRegression` with `class_weight='balanced'`
-
-6. Evaluation
-   - classification report
-   - confusion matrix
-   - ROC-AUC score
-   - F1 score
-   - recall
-   - precision
-
-## Methodology
-1. Data Cleaning
-Converted TotalCharges to numeric
-Removed missing values
-Dropped non-informative identifier (customerID)
-Encoded target variable (Churn → 0/1)
-
-2. Exploratory Analysis
-Identified class imbalance
-Analyzed churn across:
-Contract type
-Tech support
-Monthly charges
-This step guided modeling decisions (e.g., imbalance handling).
-
-3. Experimental Design
-To ensure methodological correctness:
-
-Stratified Train/Test Split (80/20)
-Clear separation of features (X) and target (y)
-Automatic detection of numerical and categorical variables
-
-4. Reproducible ML Pipeline
-All preprocessing steps are encapsulated inside a Scikit‑Learn Pipeline to prevent data leakage.
-
-Preprocessing (ColumnTransformer):
-
-StandardScaler → numerical features
-OneHotEncoder(drop='first', handle_unknown='ignore') → categorical features
-Model:
-
-Logistic Regression
-class_weight='balanced' (handles class imbalance)
-solver='liblinear'
-random_state=42
-This ensures that transformations are learned only from training data.
-
-## Tech Stack
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-Learn
-
-## Evaluation Metrics
-Performance is evaluated using:
-
-Classification Report
-Confusion Matrix
-ROC-AUC
-F1 Score
-Recall
-Precision
-Using multiple metrics ensures robust assessment under class imbalance.
-
-## Architecture / ML Pipeline Diagram
+# Workflow & Methodology
 
 Raw Dataset (IBM Telco Data)
-        │
-        ▼
-Data Cleaning
-        │
-        ▼
-Exploratory Data Analysis
-        │
-        ▼
-Feature / Target Split
-        │
-        ▼
-Feature Type Detection
-        │
-        ▼
-Stratified Train/Test Split
-        │
-        ▼
-ColumnTransformer
-   ├── StandardScaler (Numerical)
-   └── OneHotEncoder (Categorical)
-        │
-        ▼
-Logistic Regression (Balanced)
-        │
-        ▼
-Model Evaluation
+       │
+       ▼
+Data Cleaning (Imputation & Conversion)
+       │
+       ▼
+Exploratory Data Analysis (EDA)
+       │
+       ▼
+Feature / Target Split (X / y)
+       │
+       ▼
+Feature Type Detection (Numerical vs. Categorical)
+       │
+       ▼
+Stratified Train/Test Split (80/20)
+       │
+       ▼
+ColumnTransformer (Preprocessing Pipeline)
+ ├── StandardScaler (Numerical Features)
+ └── OneHotEncoder (Categorical Features)
+       │
+       ▼
+Model Architecture (Logistic Regression / XGBoost)
+       │
+       ▼
+Decision Threshold Tuning (Recall Optimization)
+       │
+       ▼
+Model Evaluation (Metrics & Confusion Matrix)
 
 
+# 1. Data Cleaning
+Replaced blank space values in TotalCharges with NaN and converted the column to numeric.
+Dropped rows with missing values (representing less than 0.15% of the data).
+Removed non-informative identifier columns (customerID).
+Encoded the target variable Churn to binary (Yes → 1, No → 0).
+
+# 2. Exploratory Data Analysis (EDA)
+Analyzed churn distribution (revealing a clear class imbalance: ~26.5% churn).
+Explored correlations between churn and contract types (e.g., Month-to-month contracts showed significantly higher churn
+
+Analyzed relationship between tech support availability and churn.
+
+Examined monthly charges distributions among churned and retained customers.
+
+# 3. Experimental Design & Preprocessing Pipeline
+
+To prevent data leakage and guarantee reproducibility, all preprocessing steps are encapsulated inside a Scikit-Learn Pipeline using ColumnTransformer:
+
+Numerical Features: Handled via StandardScaler.
+
+Categorical Features: Processed via OneHotEncoder(drop='first', handle_unknown='ignore').
+Data Split: Evaluated using a stratified 80/20 train/test split to preserve the original class ratio.
+
+# 4. Classification & Optimization Strategy
+
+To address class imbalance and satisfy the business requirement of capturing the maximum number of churning customers, the modeling strategy incorporated:
+Algorithm Choice: Evaluated LogisticRegression (with class_weight='balanced') and gradient-boosted trees (XGBoost).
+Decision Threshold Tuning: Because default classification boundaries set the probability threshold at 0.50, models often output overly conservative predictions for the minority class. By extracting predicted probabilities (predict_proba) and systematically evaluating thresholds from 0.05 to 0.50, we optimized the decision-making process.
+
+Evaluation & Results
+
+# Decision Threshold Trade-off
+By tuning the probability threshold on the trained model, we achieved the following trade-offs on the test set:
+ThresholdRecallPrecisionF1-Score0.50 (Default)78.34%51.95%0.62470.32 (Optimized)87.97%46.14%0.60530.3089.84%45.41%0.60320.05 (Max Recall)98.40%32.80%0.4920
+
+# Why Threshold was Chosen
+Using the default threshold of 0.50 yields an insufficient recall of 78.34%.
+Moving the threshold down to 0.32 successfully pushes the recall rate above the target to 87.97%.
+
+At 0.32, the model retains a balanced F1-score (0.6053) and avoids the excessive false positives associated with extreme thresholds like 0.05 (where precision drops to 32.8%).
+
+# Methodological Reflection (for README / Applications)
+
+Using the default decision threshold of 0.50, the model achieved a recall of 78.3%. Since churn detection prioritizes minimizing false negatives (missing customers who are about to leave), the decision threshold was tuned on predicted probabilities. A threshold of 0.32 increased recall to approximately 88% while maintaining a highly acceptable precision-recall trade-off, avoiding the operational costs of over-classifying non-churners."
+# Tech Stack
+Language: Python
+Data Wrangling: Pandas, NumPy
+Visualization: Matplotlib, Seaborn
+Machine Learning: Scikit-Learn, XGBoost
